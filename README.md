@@ -3,6 +3,8 @@ http://build.smartthings.com/projects/smartnest/
 
 Now SmartThings can talk to your Nest thermostat.
 
+Note: this is technically against the Nest TOS. So use at your own risk.
+
 ## Installation
 
 1. Create a new device type (https://graph.api.smartthings.com/ide/devices)
