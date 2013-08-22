@@ -182,6 +182,7 @@ def poll() {
         data.shared = it.data.shared.getAt(settings.serial)
         data.structureId = it.data.link.getAt(settings.serial).structure.tokenize('.')[1]
         data.structure = it.data.structure.getAt(data.structureId)
+        data.postal_code = data.structure.postal_code
                 
         data.device.fan_mode = data.device.fan_mode == 'duty-cycle'? 'circulate' : data.device.fan_mode
         data.structure.away = data.structure.away? 'away' : 'present'
@@ -209,7 +210,7 @@ def api(method, args = [], success = {}) {
         'thermostat_mode': [uri: "/v2/put/shared.${settings.serial}", type: 'post'],
         'temperature': [uri: "/v2/put/shared.${settings.serial}", type: 'post'],
         'presence': [uri: "/v2/put/structure.${data.structureId}", type: 'post'],
-        'weather': [uri: "https://home.nest.com/api/0.1/weather/forecast/${data.structure.postal_code}", type: 'get']
+        'weather': [uri: "https://home.nest.com/api/0.1/weather/forecast/${data.postal_code}", type: 'get']
     ]
     
     def request = methods.getAt(method)
