@@ -21,17 +21,19 @@ Note: this is technically against the Nest TOS. So use at your own risk.
         * present
         * setPresence
 
-2. Create a new device (https://graph.api.smartthings.com/device/list)
+1. Publish the device type (next to Save button) > For Me
+
+1. Create a new device (https://graph.api.smartthings.com/device/list)
     * Name: Your Choice
     * Device Network Id: Your Choice
     * Type: Nest (should be the last option)
     * Location: Choose the correct location
     * Hub/Group: Leave blank
 
-3. Update device preferences
-    *     Click on the new device to see the details.
-    *     Click the edit button next to Preferences
-    *     Fill in your information.
-    *     To find your serial number, login to http://home.nest.com. Click on the thermostat you want to control. Under settings, go to Technical Info. Your serial number is the second item.
+1. Update device preferences
+    * Click on the new device to see the details.
+    * Click the edit button next to Preferences
+    * Fill in your information.
+    * To find your serial number, login to http://home.nest.com. Click on the thermostat you want to control. Under settings, go to Technical Info. Your serial number is the second item.
 
-4. That's it, you're done.
+1. That's it, you're done.
