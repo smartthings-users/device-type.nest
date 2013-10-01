@@ -3,8 +3,41 @@
  *
  *  Author: dianoga7@3dgo.net
  *  Date: 2013-07-18
- *  Code: https://github.com/smartthings-users/device-type.nest
+ *  Code: https://gist.github.com/Dianoga/6055918
  *
+ * INSTALLATION
+ * =========================================
+ * 1) Create a new device type (https://graph.api.smartthings.com/ide/devices)
+ *     Name: Nest
+ *     Author: dianoga7@3dgo.net
+ *     Capabilities:
+ *         Polling
+ *         Relative Humidity Measurement
+ *         Thermostat
+ *     Custom Attributes:
+ *         presence
+ *     Custom Commands:
+ *         away
+ *         present
+ *         setPresence
+ *
+ * 2) Create a new device (https://graph.api.smartthings.com/device/list)
+ *     Name: Your Choice
+ *     Device Network Id: Your Choice
+ *     Type: Nest (should be the last option)
+ *     Location: Choose the correct location
+ *     Hub/Group: Leave blank
+ *
+ * 3) Update device preferences
+ *     Click on the new device to see the details.
+ *     Click the edit button next to Preferences
+ *     Fill in your information.
+ *     To find your serial number, login to http://home.nest.com. Click on the thermostat 
+ *     you want to control. Under settings, go to Technical Info. Your serial number is 
+ *     the second item.
+ *
+ * 4) That's it, you're done.
+ *     
  * Copyright (C) 2013 Brian Steere <dianoga7@3dgo.net>
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this 
  * software and associated documentation files (the "Software"), to deal in the Software 
@@ -165,7 +198,7 @@ def present() {
 }
 
 def setPresence(status) {
-	log.debug "Status: $status"
+    log.debug "Status: $status"
     api('presence', ['away': status == 'away', 'away_timestamp': new Date().getTime(), 'away_setter': 0]) {
         sendEvent(name: 'presence', value: status)
     }
@@ -182,7 +215,6 @@ def poll() {
         data.shared = it.data.shared.getAt(settings.serial)
         data.structureId = it.data.link.getAt(settings.serial).structure.tokenize('.')[1]
         data.structure = it.data.structure.getAt(data.structureId)
-        data.postal_code = data.structure.postal_code
                 
         data.device.fan_mode = data.device.fan_mode == 'duty-cycle'? 'circulate' : data.device.fan_mode
         data.structure.away = data.structure.away? 'away' : 'present'
@@ -210,7 +242,7 @@ def api(method, args = [], success = {}) {
         'thermostat_mode': [uri: "/v2/put/shared.${settings.serial}", type: 'post'],
         'temperature': [uri: "/v2/put/shared.${settings.serial}", type: 'post'],
         'presence': [uri: "/v2/put/structure.${data.structureId}", type: 'post'],
-        'weather': [uri: "https://home.nest.com/api/0.1/weather/forecast/${data.postal_code}", type: 'get']
+        'weather': [uri: "https://home.nest.com/api/0.1/weather/forecast/52317", type: 'get']
     ]
     
     def request = methods.getAt(method)
@@ -237,10 +269,16 @@ def doRequest(uri, args, type, success) {
         body: args
     ]
     
-    if(type == 'post') {
-        httpPostJson(params, success)
-    } else if (type == 'get') {
-        httpGet(params, success)
+    try {
+        if(type == 'post') {
+            httpPostJson(params, success)
+        } else if (type == 'get') {    
+            httpGet(params, success)
+        }
+    } catch (Throwable e) {
+        if(e.getStatusCode() == 401) {
+            login()
+        }
     }
 }
 
@@ -248,7 +286,7 @@ def login(method = null, args = [], success = {}) {
     def params = [
         uri: 'https://home.nest.com/user/login',
         body: [username: settings.username, password: settings.password]
-    ]        
+    ]   
     
     httpPost(params) {response -> 
         data.auth = response.data
