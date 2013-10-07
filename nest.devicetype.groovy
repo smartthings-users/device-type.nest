@@ -241,8 +241,7 @@ def api(method, args = [], success = {}) {
         'fan_mode': [uri: "/v2/put/device.${settings.serial}", type: 'post'],
         'thermostat_mode': [uri: "/v2/put/shared.${settings.serial}", type: 'post'],
         'temperature': [uri: "/v2/put/shared.${settings.serial}", type: 'post'],
-        'presence': [uri: "/v2/put/structure.${data.structureId}", type: 'post'],
-        'weather': [uri: "https://home.nest.com/api/0.1/weather/forecast/52317", type: 'get']
+        'presence': [uri: "/v2/put/structure.${data.structureId}", type: 'post']
     ]
     
     def request = methods.getAt(method)
