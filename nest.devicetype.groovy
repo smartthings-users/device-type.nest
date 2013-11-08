@@ -90,7 +90,7 @@ metadata {
             state "on", label:'${name}', action:"thermostat.fanCirculate", icon: "st.Appliances.appliances11"
             state "circulate", label:'${name}', action:"thermostat.fanAuto", icon: "st.Appliances.appliances11"
         }
-        controlTile("coolSliderControl", "device.coolingSetpoint", "slider", height: 1, width: 3, inactiveLabel: false) {
+        controlTile("coolSliderControl", "device.coolingSetpoint", "slider", height: 3, width: 1, inactiveLabel: false) {
             state "setCoolingSetpoint", label:'Set temperarure to', action:"thermostat.setCoolingSetpoint", 
             backgroundColors:[
                 [value: 31, color: "#153591"],
