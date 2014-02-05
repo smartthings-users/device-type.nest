@@ -275,9 +275,7 @@ def doRequest(uri, args, type, success) {
             httpGet(params, success)
         }
     } catch (Throwable e) {
-        if(e.getStatusCode() == 401) {
-            login()
-        }
+        login()
     }
 }
 
