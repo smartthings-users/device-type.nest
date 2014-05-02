@@ -62,6 +62,17 @@ preferences {
  
  // for the UI
 metadata {
+    definition (name: "Nest Thermostat", author: "dianoga7@3dgo.net") {
+        capability "Polling"
+        capability "Relative Humidity Measurement"
+        capability "Thermostat"
+
+        attribute "presence", "string"
+
+        command "away"
+        command "present"
+        command "setPresence"
+	}
     simulator {
         // TODO: define status and reply messages here
     }
