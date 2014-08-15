@@ -62,7 +62,7 @@ preferences {
 
  // for the UI
 metadata {
-    definition (name: "Nest Thermostat", author: "dianoga7@3dgo.net") {
+    definition (name: "Nest Thermostat", namespace: "smartthings-users", author: "dianoga7@3dgo.net") {
         capability "Polling"
         capability "Relative Humidity Measurement"
         capability "Thermostat"
