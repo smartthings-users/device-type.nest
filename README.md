@@ -14,12 +14,14 @@ Note: this is technically against the Nest TOS. So use at your own risk.
         * Polling
         * Relative Humidity Measurement
         * Thermostat
+        * Temperature Measurement
     * Custom Attributes:
         * presence
     * Custom Commands:
         * away
         * present
         * setPresence
+        * range
 
 1. Publish the device type (next to Save button) > For Me
 
