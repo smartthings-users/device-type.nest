@@ -13,12 +13,14 @@
  *         Polling
  *         Relative Humidity Measurement
  *         Thermostat
+ *         Temperature Measurement
  *     Custom Attributes:
  *         presence
  *     Custom Commands:
  *         away
  *         present
  *         setPresence
+ *         range
  *
  * 2) Create a new device (https://graph.api.smartthings.com/device/list)
  *     Name: Your Choice
@@ -62,7 +64,7 @@ preferences {
 
  // for the UI
 metadata {
-    definition (name: "Nest Thermostat", author: "dianoga7@3dgo.net") {
+    definition (name: "Nest", namespace: "smartthings-users", author: "dianoga7@3dgo.net") {
         capability "Polling"
         capability "Relative Humidity Measurement"
         capability "Thermostat"

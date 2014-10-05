@@ -10,16 +10,19 @@ Note: this is technically against the Nest TOS. So use at your own risk.
 1. Create a new device type (https://graph.api.smartthings.com/ide/devices)
     * Name: Nest
     * Author: dianoga7@3dgo.net
+    * Namespace: smartthings-users
     * Capabilities:
         * Polling
         * Relative Humidity Measurement
         * Thermostat
+        * Temperature Measurement
     * Custom Attributes:
         * presence
     * Custom Commands:
         * away
         * present
         * setPresence
+        * range
 
 1. Publish the device type (next to Save button) > For Me
 
