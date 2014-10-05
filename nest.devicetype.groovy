@@ -327,12 +327,23 @@ def doRequest(uri, args, type, success) {
         ],
         body: args
     ]
+    
+     def postRequest = { response ->
+        if (response.getStatus() == 302) {
+        	def locations = response.getHeaders("Location")
+            def location = locations[0].getValue()
+            log.debug "redirecting to ${location}"
+            doRequest(location, args, type, success)
+        } else {
+            success.call(response)
+        }
+    }
 
     try {
         if(type == 'post') {
-            httpPostJson(params, success)
+            httpPostJson(params, postRequest)
         } else if (type == 'get') {
-            httpGet(params, success)
+            httpGet(params, postRequest)
         }
     } catch (Throwable e) {
         login()
