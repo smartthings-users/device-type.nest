@@ -22,7 +22,6 @@ Note: this is technically against the Nest TOS. So use at your own risk.
         * away
         * present
         * setPresence
-        * range
 
 1. Publish the device type (next to Save button) > For Me
 

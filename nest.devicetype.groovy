@@ -20,7 +20,6 @@
  *         away
  *         present
  *         setPresence
- *         range
  *
  * 2) Create a new device (https://graph.api.smartthings.com/device/list)
  *     Name: Your Choice
@@ -75,7 +74,6 @@ metadata {
         command "away"
         command "present"
         command "setPresence"
-        command "range"
     }
 
     simulator {
@@ -96,18 +94,21 @@ metadata {
             )
         }
         standardTile("thermostatMode", "device.thermostatMode", inactiveLabel: false, decoration: "flat") {
-            state("range", label:'${name}', action:"thermostat.off", icon: "st.Weather.weather14", backgroundColor: '#714377')
-            state("off", label:'${name}', action:"thermostat.cool", icon: "st.Outdoor.outdoor19")
-            state("cool", label:'${name}', action:"thermostat.heat", icon: "st.Weather.weather7", backgroundColor: '#003CEC')
-            state("heat", label:'${name}', action:"range", icon: "st.Weather.weather14", backgroundColor: '#E14902')
+            state("auto", label:'', action:"thermostat.off", icon: "st.thermostat.auto", backgroundColor: '#714377')
+            state("off", label:'', action:"thermostat.cool", icon: "st.thermostat.heating-cooling-off")
+            state("cool", label:'', action:"thermostat.heat", icon: "st.thermostat.cool", backgroundColor: '#003CEC')
+            state("heat", label:'', action:"thermostat.auto", icon: "st.thermostat.heat", backgroundColor: '#E14902')
         }
         standardTile("thermostatFanMode", "device.thermostatFanMode", inactiveLabel: false, decoration: "flat") {
-            state "auto", label:'${name}', action:"thermostat.fanOn", icon: "st.Appliances.appliances11"
-            state "on", label:'${name}', action:"thermostat.fanCirculate", icon: "st.Appliances.appliances11"
-            state "circulate", label:'${name}', action:"thermostat.fanAuto", icon: "st.Appliances.appliances11"
+            state "auto", label:'', action:"thermostat.fanOn", icon: "st.thermostat.fan-auto"
+            state "on", label:'', action:"thermostat.fanCirculate", icon: "st.thermostat.fan-on"
+            state "circulate", label:'', action:"thermostat.fanAuto", icon: "st.thermostat.fan-circulate"
         }
-        controlTile("coolSliderControl", "device.coolingSetpoint", "slider", height: 3, width: 1, inactiveLabel: false) {
-            state "setCoolingSetpoint", label:'Set temperarure to', action:"thermostat.setCoolingSetpoint",
+        valueTile("heatingSetpoint", "device.heatingSetpoint", inactiveLabel: false, decoration: "flat") {
+            state "default", label:'${currentValue}°', unit:"F", backgroundColor:"#ffffff"
+        }
+        controlTile("heatSliderControl", "device.heatingSetpoint", "slider", height: 1, width: 2, inactiveLabel: false) {
+            state "setHeatingSetpoint", label:'Set temperarure to', action:"thermostat.setHeatingSetpoint",
             backgroundColors:[
                 [value: 31, color: "#153591"],
                 [value: 44, color: "#1e9cbb"],
@@ -119,10 +120,19 @@ metadata {
             ]
         }
         valueTile("coolingSetpoint", "device.coolingSetpoint", inactiveLabel: false, decoration: "flat") {
-            state "default", label:'${currentValue}°', unit:"F", backgroundColor:"#ffffff", icon:"st.appliances.appliances8"
+            state "default", label:'${currentValue}°', unit:"F", backgroundColor:"#ffffff"
         }
-        valueTile("heatingSetpoint", "device.heatingSetpoint", inactiveLabel: false, decoration: "flat") {
-            state "default", label:'${currentValue}°', unit:"F", backgroundColor:"#ffffff", icon:"st.appliances.appliances8"
+        controlTile("coolSliderControl", "device.coolingSetpoint", "slider", height: 1, width: 2, inactiveLabel: false) {
+            state "setCoolingSetpoint", label:'Set temperarure to', action:"thermostat.setCoolingSetpoint",
+            backgroundColors:[
+                [value: 31, color: "#153591"],
+                [value: 44, color: "#1e9cbb"],
+                [value: 59, color: "#90d2a7"],
+                [value: 74, color: "#44b621"],
+                [value: 84, color: "#f1d801"],
+                [value: 95, color: "#d04e00"],
+                [value: 96, color: "#bc2323"]
+            ]
         }
         valueTile("humidity", "device.humidity", inactiveLabel: false, decoration: "flat") {
             state "default", label:'${currentValue}%', unit:"Humidity"
@@ -135,7 +145,7 @@ metadata {
             state "default", action:"polling.poll", icon:"st.secondary.refresh"
         }
         main "temperature"
-        details(["temperature", "thermostatMode", "thermostatFanMode", "heatSliderControl", "heatingSetpoint", "coolSliderControl", "coolingSetpoint", "humidity", "presence", "refresh"])
+        details(["temperature", "thermostatMode", "thermostatFanMode", "heatingSetpoint", "heatSliderControl", "coolingSetpoint", "coolSliderControl", "humidity", "presence", "refresh"])
     }
 }
 
@@ -193,7 +203,7 @@ def cool() {
     setThermostatMode('cool')
 }
 
-def range() {
+def auto() {
     setThermostatMode('range')
 }
 
@@ -243,10 +253,6 @@ def setPresence(status) {
     api('presence', ['away': status == 'away', 'away_timestamp': new Date().getTime(), 'away_setter': 0]) {
         sendEvent(name: 'presence', value: status)
     }
-}
-
-def auto() {
-    log.debug "Executing 'auto'"
 }
 
 def poll() {
