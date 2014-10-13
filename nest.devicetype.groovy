@@ -93,46 +93,28 @@ metadata {
                 ]
             )
         }
-        standardTile("thermostatMode", "device.thermostatMode", inactiveLabel: false, decoration: "flat") {
-            state("auto", label:'', action:"thermostat.off", icon: "st.thermostat.auto", backgroundColor: '#714377')
-            state("off", label:'', action:"thermostat.cool", icon: "st.thermostat.heating-cooling-off")
-            state("cool", label:'', action:"thermostat.heat", icon: "st.thermostat.cool", backgroundColor: '#003CEC')
-            state("heat", label:'', action:"thermostat.auto", icon: "st.thermostat.heat", backgroundColor: '#E14902')
+        standardTile("thermostatMode", "device.thermostatMode", inactiveLabel: true, decoration: "flat") {
+            state("auto", action:"thermostat.off", icon: "st.thermostat.auto")
+            state("off", action:"thermostat.cool", icon: "st.thermostat.heating-cooling-off")
+            state("cool", action:"thermostat.heat", icon: "st.thermostat.cool")
+            state("heat", action:"thermostat.auto", icon: "st.thermostat.heat")
         }
-        standardTile("thermostatFanMode", "device.thermostatFanMode", inactiveLabel: false, decoration: "flat") {
-            state "auto", label:'', action:"thermostat.fanOn", icon: "st.thermostat.fan-auto"
-            state "on", label:'', action:"thermostat.fanCirculate", icon: "st.thermostat.fan-on"
-            state "circulate", label:'', action:"thermostat.fanAuto", icon: "st.thermostat.fan-circulate"
+        standardTile("thermostatFanMode", "device.thermostatFanMode", inactiveLabel: true, decoration: "flat") {
+            state "auto", action:"thermostat.fanOn", icon: "st.thermostat.fan-auto"
+            state "on", action:"thermostat.fanCirculate", icon: "st.thermostat.fan-on"
+            state "circulate", action:"thermostat.fanAuto", icon: "st.thermostat.fan-circulate"
         }
-        valueTile("heatingSetpoint", "device.heatingSetpoint", inactiveLabel: false, decoration: "flat") {
-            state "default", label:'${currentValue}°', unit:"F", backgroundColor:"#ffffff"
+        valueTile("heatingSetpoint", "device.heatingSetpoint", canChangeIcon: true) {
+            state "default", label:'${currentValue}°', unit:"F", backgroundColor:"#bc2323"
         }
         controlTile("heatSliderControl", "device.heatingSetpoint", "slider", height: 1, width: 2, inactiveLabel: false) {
-            state "setHeatingSetpoint", label:'Set temperarure to', action:"thermostat.setHeatingSetpoint",
-            backgroundColors:[
-                [value: 31, color: "#153591"],
-                [value: 44, color: "#1e9cbb"],
-                [value: 59, color: "#90d2a7"],
-                [value: 74, color: "#44b621"],
-                [value: 84, color: "#f1d801"],
-                [value: 95, color: "#d04e00"],
-                [value: 96, color: "#bc2323"]
-            ]
+            state "setHeatingSetpoint", label:'Set temperature to', action:"thermostat.setHeatingSetpoint"
         }
-        valueTile("coolingSetpoint", "device.coolingSetpoint", inactiveLabel: false, decoration: "flat") {
-            state "default", label:'${currentValue}°', unit:"F", backgroundColor:"#ffffff"
+        valueTile("coolingSetpoint", "device.coolingSetpoint", canChangeIcon: true) {
+            state "default", label:'${currentValue}°', unit:"F", backgroundColor:"#1e9cbb"
         }
         controlTile("coolSliderControl", "device.coolingSetpoint", "slider", height: 1, width: 2, inactiveLabel: false) {
-            state "setCoolingSetpoint", label:'Set temperarure to', action:"thermostat.setCoolingSetpoint",
-            backgroundColors:[
-                [value: 31, color: "#153591"],
-                [value: 44, color: "#1e9cbb"],
-                [value: 59, color: "#90d2a7"],
-                [value: 74, color: "#44b621"],
-                [value: 84, color: "#f1d801"],
-                [value: 95, color: "#d04e00"],
-                [value: 96, color: "#bc2323"]
-            ]
+            state "setCoolingSetpoint", label:'Set temperature to', action:"thermostat.setCoolingSetpoint"
         }
         valueTile("humidity", "device.humidity", inactiveLabel: false, decoration: "flat") {
             state "default", label:'${currentValue}%', unit:"Humidity"
