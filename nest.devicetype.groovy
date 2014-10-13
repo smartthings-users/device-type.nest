@@ -68,6 +68,8 @@ metadata {
         capability "Relative Humidity Measurement"
         capability "Thermostat"
         capability "Temperature Measurement"
+        capability "Presence Sensor"
+        capability "Sensor"
 
         attribute "presence", "string"
 
@@ -223,10 +225,12 @@ def setThermostatFanMode(mode) {
 }
 
 def away() {
+	sendEvent(name: 'presence', value: 'not present')
     setPresence('away')
 }
 
 def present() {
+	sendEvent(name: 'presence', value: 'present')
     setPresence('present')
 }
 
