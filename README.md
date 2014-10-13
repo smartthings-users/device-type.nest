@@ -16,6 +16,8 @@ Note: this is technically against the Nest TOS. So use at your own risk.
         * Relative Humidity Measurement
         * Thermostat
         * Temperature Measurement
+		* Presence Sensor
+		* Sensor
     * Custom Attributes:
         * presence
     * Custom Commands:
