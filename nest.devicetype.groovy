@@ -280,6 +280,9 @@ def poll() {
         sendEvent(name: 'coolingSetpoint', value: coolingSetpoint)
         sendEvent(name: 'heatingSetpoint', value: heatingSetpoint)
         sendEvent(name: 'presence', value: data.structure.away)
+		if (data.structure.away == 'away') {
+            sendEvent(name: 'presence', value: 'not present')
+        }
     }
 }
 
