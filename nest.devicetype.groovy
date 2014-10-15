@@ -14,6 +14,8 @@
  *         Relative Humidity Measurement
  *         Thermostat
  *         Temperature Measurement
+ *         Presence Sensor
+ *         Sensor
  *     Custom Attributes:
  *         presence
  *     Custom Commands:
@@ -71,8 +73,6 @@ metadata {
         capability "Presence Sensor"
         capability "Sensor"
 
-        attribute "presence", "string"
-
         command "away"
         command "present"
         command "setPresence"
@@ -83,8 +83,8 @@ metadata {
     }
 
     tiles {
-        valueTile("temperature", "device.temperature", width: 2, height: 2, canChangeIcon: true) {
-            state("temperature", label: '${currentValue}°', unit:"F", backgroundColors: [
+        valueTile("temperature", "device.temperature", canChangeIcon: true) {
+            state("temperature", label: '${currentValue}°F', unit:"Current", backgroundColors: [
                     [value: 31, color: "#153591"],
                     [value: 44, color: "#1e9cbb"],
                     [value: 59, color: "#90d2a7"],
@@ -107,18 +107,25 @@ metadata {
             state "circulate", action:"thermostat.fanAuto", icon: "st.thermostat.fan-circulate"
         }
         valueTile("heatingSetpoint", "device.heatingSetpoint", canChangeIcon: true) {
-            state "default", label:'${currentValue}°', unit:"F", backgroundColor:"#bc2323"
+            state "default", label:'${currentValue}°F', unit:"Heat", backgroundColor:"#bc2323"
         }
         controlTile("heatSliderControl", "device.heatingSetpoint", "slider", height: 1, width: 2, inactiveLabel: false) {
             state "setHeatingSetpoint", label:'Set temperature to', action:"thermostat.setHeatingSetpoint"
         }
         valueTile("coolingSetpoint", "device.coolingSetpoint", canChangeIcon: true) {
-            state "default", label:'${currentValue}°', unit:"F", backgroundColor:"#1e9cbb"
+            state "default", label:'${currentValue}°F', unit:"Cool", backgroundColor:"#1e9cbb"
         }
         controlTile("coolSliderControl", "device.coolingSetpoint", "slider", height: 1, width: 2, inactiveLabel: false) {
             state "setCoolingSetpoint", label:'Set temperature to', action:"thermostat.setCoolingSetpoint"
         }
-        valueTile("humidity", "device.humidity", inactiveLabel: false, decoration: "flat") {
+        standardTile("thermostatOperatingState", "device.thermostatOperatingState", inactiveLabel: false, decoration: "flat") {
+            state "idle", action:"polling.poll", label:'${name}', icon: "st.sonos.pause-icon"
+            state "cooling", action:"polling.poll", label:'  ', icon: "st.thermostat.cooling", backgroundColor:"#1e9cbb"
+            state "heating", action:"polling.poll", label:'  ', icon: "st.thermostat.heating", backgroundColor:"#bc2323"
+            state "fan only", action:"polling.poll", label:'${name}', icon: "st.Appliances.appliances11"
+        }
+
+        valueTile("humidity", "device.humidity", inactiveLabel: false) {
             state "default", label:'${currentValue}%', unit:"Humidity"
         }
         standardTile("presence", "device.presence", inactiveLabel: false, decoration: "flat") {
@@ -129,7 +136,7 @@ metadata {
             state "default", action:"polling.poll", icon:"st.secondary.refresh"
         }
         main "temperature"
-        details(["temperature", "thermostatMode", "thermostatFanMode", "heatingSetpoint", "heatSliderControl", "coolingSetpoint", "coolSliderControl", "humidity", "presence", "refresh"])
+        details(["temperature", "thermostatOperatingState", "humidity", "thermostatMode", "thermostatFanMode", "presence", "heatingSetpoint", "heatSliderControl", "coolingSetpoint", "coolSliderControl", "refresh"])
     }
 }
 
@@ -225,12 +232,10 @@ def setThermostatFanMode(mode) {
 }
 
 def away() {
-	sendEvent(name: 'presence', value: 'not present')
     setPresence('away')
 }
 
 def present() {
-	sendEvent(name: 'presence', value: 'present')
     setPresence('present')
 }
 
@@ -239,6 +244,10 @@ def setPresence(status) {
     api('presence', ['away': status == 'away', 'away_timestamp': new Date().getTime(), 'away_setter': 0]) {
         sendEvent(name: 'presence', value: status)
     }
+	if (status == 'away') {
+		sendEvent(name: 'presence', value: 'not present')
+	}
+
 }
 
 def poll() {
@@ -283,6 +292,16 @@ def poll() {
 		if (data.structure.away == 'away') {
             sendEvent(name: 'presence', value: 'not present')
         }
+		
+		if (data.shared.hvac_ac_state) {
+            sendEvent(name: 'thermostatOperatingState', value: "cooling")
+		} else if (data.shared.hvac_heater_state) {
+            sendEvent(name: 'thermostatOperatingState', value: "heating")
+		} else if (data.shared.hvac_fan_state) {
+            sendEvent(name: 'thermostatOperatingState', value: "fan only")
+		} else {
+            sendEvent(name: 'thermostatOperatingState', value: "idle")
+		}
     }
 }
 
