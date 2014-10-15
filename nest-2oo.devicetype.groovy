@@ -1,4 +1,11 @@
 /**
+ *  TODO:
+ *    * Update Temperature Tile color based on A/C state (Blue = Cool, Red = Heat, Grey = Off)
+ *    * humiditySetpoint from https://github.com/bmmiller/SmartThings/blob/master/devicetype.nest/devicetype.nest.groovy
+ *
+ */
+
+/**
  *  Nest Direct
  *
  *  Author: dianoga7@3dgo.net
@@ -232,7 +239,6 @@ def setHeatingSetpoint(temp) {
 			}
 			break;
 	}
-	poll()
 }
 
 def coolingSetpointUp(){
@@ -279,7 +285,6 @@ def setCoolingSetpoint(temp) {
 			}
 			break;
 	}
-	poll()
 }
 
 def heatingSetpointUp(){
