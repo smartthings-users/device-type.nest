@@ -130,12 +130,13 @@ metadata {
         }
         standardTile("presence", "device.presence", inactiveLabel: false, decoration: "flat") {
             state "present", label:'${name}', action:"away", icon: "st.Home.home2"
-            state "away", label:'${name}', action:"present", icon: "st.Transportation.transportation5"
+            state "not present", label:'away', action:"present", icon: "st.Transportation.transportation5"
         }
         standardTile("refresh", "device.thermostatMode", inactiveLabel: false, decoration: "flat") {
             state "default", action:"polling.poll", icon:"st.secondary.refresh"
         }
-        main "temperature"
+
+		main(["temperature", "thermostatOperatingState", "humidity"])
         details(["temperature", "thermostatOperatingState", "humidity", "thermostatMode", "thermostatFanMode", "presence", "heatingSetpoint", "heatSliderControl", "coolingSetpoint", "coolSliderControl", "refresh"])
     }
 }
@@ -242,12 +243,8 @@ def present() {
 def setPresence(status) {
     log.debug "Status: $status"
     api('presence', ['away': status == 'away', 'away_timestamp': new Date().getTime(), 'away_setter': 0]) {
-        sendEvent(name: 'presence', value: status)
+    	poll()
     }
-	if (status == 'away') {
-		sendEvent(name: 'presence', value: 'not present')
-	}
-
 }
 
 def poll() {
@@ -288,11 +285,18 @@ def poll() {
         
         sendEvent(name: 'coolingSetpoint', value: coolingSetpoint)
         sendEvent(name: 'heatingSetpoint', value: heatingSetpoint)
-        sendEvent(name: 'presence', value: data.structure.away)
-		if (data.structure.away == 'away') {
-            sendEvent(name: 'presence', value: 'not present')
+
+		switch (device.latestValue('presence')) {
+        	case "present":
+            	if (data.structure.away == 'away') {
+                    sendEvent(name: 'presence', value: 'not present')
+                }
+            case "not present":
+            	if (data.structure.away == 'present') {
+                    sendEvent(name: 'presence', value: 'present')
+                }
         }
-		
+
 		if (data.shared.hvac_ac_state) {
             sendEvent(name: 'thermostatOperatingState', value: "cooling")
 		} else if (data.shared.hvac_heater_state) {
