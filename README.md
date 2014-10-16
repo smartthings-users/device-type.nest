@@ -19,11 +19,17 @@ Note: this is technically against the Nest TOS. So use at your own risk.
 		* Presence Sensor
 		* Sensor
     * Custom Attributes:
-        * presence
+        * temperatureUnit
     * Custom Commands:
         * away
         * present
         * setPresence
+        * heatingSetpointUp
+        * heatingSetpointDown
+        * coolingSetpointUp
+        * coolingSetpointDown
+        * setFahrenheit
+        * setCelsius
 
 1. Publish the device type (next to Save button) > For Me
 

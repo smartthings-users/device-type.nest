@@ -17,11 +17,17 @@
  *         Presence Sensor
  *         Sensor
  *     Custom Attributes:
- *         presence
+ *         temperatureUnit
  *     Custom Commands:
  *         away
  *         present
  *         setPresence
+ *         heatingSetpointUp
+ *         heatingSetpointDown
+ *         coolingSetpointUp
+ *         coolingSetpointDown
+ *         setFahrenheit
+ *         setCelsius
  *
  * 2) If you want to switch from slider controls to buttons, comment out the slider only section and uncomment the button only section.
  *
@@ -95,14 +101,23 @@ metadata {
     tiles {
         valueTile("temperature", "device.temperature", canChangeIcon: true) {
             state("temperature", label: '${currentValue}°', unit:"Current", backgroundColors: [
-                    [value: 31, color: "#153591"],
-                    [value: 44, color: "#1e9cbb"],
-                    [value: 59, color: "#90d2a7"],
-                    [value: 74, color: "#44b621"],
-                    [value: 84, color: "#f1d801"],
-                    [value: 95, color: "#d04e00"],
-                    [value: 96, color: "#bc2323"]
-                ]
+					// Celsius Color Range
+					[value: 0, color: "#153591"],
+					[value: 7, color: "#1e9cbb"],
+					[value: 15, color: "#90d2a7"],
+					[value: 23, color: "#44b621"],
+					[value: 29, color: "#f1d801"],
+					[value: 33, color: "#d04e00"],
+					[value: 36, color: "#bc2323"],
+					// Fahrenheit Color Range
+					[value: 40, color: "#153591"],
+					[value: 44, color: "#1e9cbb"],
+					[value: 59, color: "#90d2a7"],
+					[value: 74, color: "#44b621"],
+					[value: 84, color: "#f1d801"],
+					[value: 92, color: "#d04e00"],
+					[value: 96, color: "#bc2323"]
+				]
             )
         }
 
