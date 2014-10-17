@@ -99,8 +99,8 @@ metadata {
     }
 
     tiles {
-        valueTile("temperature", "device.temperature", canChangeIcon: true) {
-            state("temperature", label: '${currentValue}°', unit:"Current", backgroundColors: [
+        valueTile("temperature", "device.temperature", canChangeIcon: true, canChangeBackground:true) {
+            state("temperature", label: '${currentValue}°', backgroundColors: [
 					// Celsius Color Range
 					[value: 0, color: "#153591"],
 					[value: 7, color: "#1e9cbb"],
@@ -134,11 +134,11 @@ metadata {
             state "circulate", action:"thermostat.fanAuto", icon: "st.thermostat.fan-circulate"
         }
 
-        valueTile("heatingSetpoint", "device.heatingSetpoint", canChangeIcon: true) {
+        valueTile("heatingSetpoint", "device.heatingSetpoint") {
             state "default", label:'${currentValue}°', unit:"Heat", backgroundColor:"#bc2323"
         }
 
-        valueTile("coolingSetpoint", "device.coolingSetpoint", canChangeIcon: true) {
+        valueTile("coolingSetpoint", "device.coolingSetpoint") {
             state "default", label:'${currentValue}°', unit:"Cool", backgroundColor:"#1e9cbb"
         }
 
@@ -224,11 +224,11 @@ def setHeatingSetpoint(temp) {
 			if (temp) {
 				if (latestThermostatMode.stringValue == 'range') {
 					api('temperature', ['target_change_pending': true, 'target_temperature_low': temp]) {
-						sendEvent(name: 'heatingSetpoint', value: temp)
+						sendEvent(name: 'heatingSetpoint', value: heatingSetpoint, unit: temperatureUnit, state: "heat")
 					}
 				} else if (latestThermostatMode.stringValue == 'cool') {
 					api('temperature', ['target_change_pending': true, 'target_temperature': temp]) {
-						sendEvent(name: 'heatingSetpoint', value: temp)
+						sendEvent(name: 'heatingSetpoint', value: heatingSetpoint, unit: temperatureUnit, state: "heat")
 					}
 				}
 			}
@@ -237,11 +237,11 @@ def setHeatingSetpoint(temp) {
 			if (temp) {
 				if (latestThermostatMode.stringValue == 'range') {
 					api('temperature', ['target_change_pending': true, 'target_temperature_low': fToC(temp)]) {
-						sendEvent(name: 'heatingSetpoint', value: temp)
+						sendEvent(name: 'heatingSetpoint', value: heatingSetpoint, unit: temperatureUnit, state: "heat")
 					}
 				} else if (latestThermostatMode.stringValue == 'cool') {
 					api('temperature', ['target_change_pending': true, 'target_temperature': fToC(temp)]) {
-						sendEvent(name: 'heatingSetpoint', value: temp)
+						sendEvent(name: 'heatingSetpoint', value: heatingSetpoint, unit: temperatureUnit, state: "heat")
 					}
 				}
 			}
@@ -271,11 +271,11 @@ def setCoolingSetpoint(temp) {
 			if (temp) {
 				if (latestThermostatMode.stringValue == 'range') {
 					api('temperature', ['target_change_pending': true, 'target_temperature_high': temp]) {
-						sendEvent(name: 'heatingSetpoint', value: temp)
+						sendEvent(name: 'coolingSetpoint', value: coolingSetpoint, unit: temperatureUnit, state: "cool")
 					}
 				} else if (latestThermostatMode.stringValue == 'cool') {
 					api('temperature', ['target_change_pending': true, 'target_temperature': temp]) {
-						sendEvent(name: 'heatingSetpoint', value: temp)
+						sendEvent(name: 'coolingSetpoint', value: coolingSetpoint, unit: temperatureUnit, state: "cool")
 					}
 				}
 			}
@@ -284,11 +284,11 @@ def setCoolingSetpoint(temp) {
 			if (temp) {
 				if (latestThermostatMode.stringValue == 'range') {
 					api('temperature', ['target_change_pending': true, 'target_temperature_high': fToC(temp)]) {
-						sendEvent(name: 'heatingSetpoint', value: temp)
+						sendEvent(name: 'coolingSetpoint', value: coolingSetpoint, unit: temperatureUnit, state: "cool")
 					}
 				} else if (latestThermostatMode.stringValue == 'cool') {
 					api('temperature', ['target_change_pending': true, 'target_temperature': fToC(temp)]) {
-						sendEvent(name: 'heatingSetpoint', value: temp)
+						sendEvent(name: 'coolingSetpoint', value: coolingSetpoint, unit: temperatureUnit, state: "cool")
 					}
 				}
 			}
@@ -437,8 +437,8 @@ def poll() {
 				}
 
                 sendEvent(name: 'temperature', value: temperature, unit: temperatureUnit, state: temperatureType)
-                sendEvent(name: 'coolingSetpoint', value: coolingSetpoint)
-                sendEvent(name: 'heatingSetpoint', value: heatingSetpoint)
+                sendEvent(name: 'coolingSetpoint', value: coolingSetpoint, unit: temperatureUnit, state: "cool")
+                sendEvent(name: 'heatingSetpoint', value: heatingSetpoint, unit: temperatureUnit, state: "heat")
                 break;
 			case "fahrenheit":
 				def temperature = Math.round(cToF(data.shared.current_temperature))
@@ -454,8 +454,8 @@ def poll() {
 				}
 
                 sendEvent(name: 'temperature', value: temperature, unit: temperatureUnit, state: temperatureType)
-                sendEvent(name: 'coolingSetpoint', value: coolingSetpoint)
-                sendEvent(name: 'heatingSetpoint', value: heatingSetpoint)
+                sendEvent(name: 'coolingSetpoint', value: coolingSetpoint, unit: temperatureUnit, state: "cool")
+                sendEvent(name: 'heatingSetpoint', value: heatingSetpoint, unit: temperatureUnit, state: "heat")
                 break;
 		}
 
@@ -481,7 +481,7 @@ def poll() {
 		} else {
             sendEvent(name: 'thermostatOperatingState', value: "idle")
 		}
-    }
+	}
 }
 
 def api(method, args = [], success = {}) {
