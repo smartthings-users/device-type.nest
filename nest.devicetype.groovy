@@ -14,22 +14,31 @@
  *         Relative Humidity Measurement
  *         Thermostat
  *         Temperature Measurement
+ *         Presence Sensor
+ *         Sensor
  *     Custom Attributes:
- *         presence
+ *         temperatureUnit
  *     Custom Commands:
  *         away
  *         present
  *         setPresence
- *         range
+ *         heatingSetpointUp
+ *         heatingSetpointDown
+ *         coolingSetpointUp
+ *         coolingSetpointDown
+ *         setFahrenheit
+ *         setCelsius
  *
- * 2) Create a new device (https://graph.api.smartthings.com/device/list)
+ * 2) If you want to switch from slider controls to buttons, comment out the slider only section and uncomment the button only section.
+ *
+ * 3) Create a new device (https://graph.api.smartthings.com/device/list)
  *     Name: Your Choice
  *     Device Network Id: Your Choice
  *     Type: Nest (should be the last option)
  *     Location: Choose the correct location
  *     Hub/Group: Leave blank
  *
- * 3) Update device preferences
+ * 4) Update device preferences
  *     Click on the new device to see the details.
  *     Click the edit button next to Preferences
  *     Fill in your information.
@@ -37,7 +46,7 @@
  *     you want to control. Under settings, go to Technical Info. Your serial number is
  *     the second item.
  *
- * 4) That's it, you're done.
+ * 5) That's it, you're done.
  *
  * Copyright (C) 2013 Brian Steere <dianoga7@3dgo.net>
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this
@@ -69,74 +78,135 @@ metadata {
         capability "Relative Humidity Measurement"
         capability "Thermostat"
         capability "Temperature Measurement"
-
-        attribute "presence", "string"
+        capability "Presence Sensor"
+        capability "Sensor"
 
         command "away"
         command "present"
         command "setPresence"
-        command "range"
-    }
+		command "heatingSetpointUp"
+		command "heatingSetpointDown"
+		command "coolingSetpointUp"
+		command "coolingSetpointDown"
+		command "setFahrenheit"
+		command "setCelsius"
+		
+		attribute "temperatureUnit", "string"
+	}
 
     simulator {
         // TODO: define status and reply messages here
     }
 
     tiles {
-        valueTile("temperature", "device.temperature", width: 2, height: 2, canChangeIcon: true) {
-            state("temperature", label: '${currentValue}°', unit:"F", backgroundColors: [
-                    [value: 31, color: "#153591"],
-                    [value: 44, color: "#1e9cbb"],
-                    [value: 59, color: "#90d2a7"],
-                    [value: 74, color: "#44b621"],
-                    [value: 84, color: "#f1d801"],
-                    [value: 95, color: "#d04e00"],
-                    [value: 96, color: "#bc2323"]
-                ]
+        valueTile("temperature", "device.temperature", canChangeIcon: true, canChangeBackground:true) {
+            state("temperature", label: '${currentValue}°', backgroundColors: [
+					// Celsius Color Range
+					[value: 0, color: "#153591"],
+					[value: 7, color: "#1e9cbb"],
+					[value: 15, color: "#90d2a7"],
+					[value: 23, color: "#44b621"],
+					[value: 29, color: "#f1d801"],
+					[value: 33, color: "#d04e00"],
+					[value: 36, color: "#bc2323"],
+					// Fahrenheit Color Range
+					[value: 40, color: "#153591"],
+					[value: 44, color: "#1e9cbb"],
+					[value: 59, color: "#90d2a7"],
+					[value: 74, color: "#44b621"],
+					[value: 84, color: "#f1d801"],
+					[value: 92, color: "#d04e00"],
+					[value: 96, color: "#bc2323"]
+				]
             )
         }
-        standardTile("thermostatMode", "device.thermostatMode", inactiveLabel: false, decoration: "flat") {
-            state("range", label:'${name}', action:"thermostat.off", icon: "st.Weather.weather14", backgroundColor: '#714377')
-            state("off", label:'${name}', action:"thermostat.cool", icon: "st.Outdoor.outdoor19")
-            state("cool", label:'${name}', action:"thermostat.heat", icon: "st.Weather.weather7", backgroundColor: '#003CEC')
-            state("heat", label:'${name}', action:"range", icon: "st.Weather.weather14", backgroundColor: '#E14902')
+
+        standardTile("thermostatMode", "device.thermostatMode", inactiveLabel: true, decoration: "flat") {
+            state("auto", action:"thermostat.off", icon: "st.thermostat.auto")
+            state("off", action:"thermostat.cool", icon: "st.thermostat.heating-cooling-off")
+            state("cool", action:"thermostat.heat", icon: "st.thermostat.cool")
+            state("heat", action:"thermostat.auto", icon: "st.thermostat.heat")
         }
-        standardTile("thermostatFanMode", "device.thermostatFanMode", inactiveLabel: false, decoration: "flat") {
-            state "auto", label:'${name}', action:"thermostat.fanOn", icon: "st.Appliances.appliances11"
-            state "on", label:'${name}', action:"thermostat.fanCirculate", icon: "st.Appliances.appliances11"
-            state "circulate", label:'${name}', action:"thermostat.fanAuto", icon: "st.Appliances.appliances11"
+
+        standardTile("thermostatFanMode", "device.thermostatFanMode", inactiveLabel: true, decoration: "flat") {
+            state "auto", action:"thermostat.fanOn", icon: "st.thermostat.fan-auto"
+            state "on", action:"thermostat.fanCirculate", icon: "st.thermostat.fan-on"
+            state "circulate", action:"thermostat.fanAuto", icon: "st.thermostat.fan-circulate"
         }
-        controlTile("coolSliderControl", "device.coolingSetpoint", "slider", height: 3, width: 1, inactiveLabel: false) {
-            state "setCoolingSetpoint", label:'Set temperarure to', action:"thermostat.setCoolingSetpoint",
-            backgroundColors:[
-                [value: 31, color: "#153591"],
-                [value: 44, color: "#1e9cbb"],
-                [value: 59, color: "#90d2a7"],
-                [value: 74, color: "#44b621"],
-                [value: 84, color: "#f1d801"],
-                [value: 95, color: "#d04e00"],
-                [value: 96, color: "#bc2323"]
-            ]
+
+        valueTile("heatingSetpoint", "device.heatingSetpoint") {
+            state "default", label:'${currentValue}°', unit:"Heat", backgroundColor:"#bc2323"
         }
-        valueTile("coolingSetpoint", "device.coolingSetpoint", inactiveLabel: false, decoration: "flat") {
-            state "default", label:'${currentValue}°', unit:"F", backgroundColor:"#ffffff", icon:"st.appliances.appliances8"
+
+        valueTile("coolingSetpoint", "device.coolingSetpoint") {
+            state "default", label:'${currentValue}°', unit:"Cool", backgroundColor:"#1e9cbb"
         }
-        valueTile("heatingSetpoint", "device.heatingSetpoint", inactiveLabel: false, decoration: "flat") {
-            state "default", label:'${currentValue}°', unit:"F", backgroundColor:"#ffffff", icon:"st.appliances.appliances8"
+
+		standardTile("thermostatOperatingState", "device.thermostatOperatingState", inactiveLabel: false, decoration: "flat") {
+            state "idle", action:"polling.poll", label:'${name}', icon: "st.sonos.pause-icon"
+            state "cooling", action:"polling.poll", label:'  ', icon: "st.thermostat.cooling", backgroundColor:"#1e9cbb"
+            state "heating", action:"polling.poll", label:'  ', icon: "st.thermostat.heating", backgroundColor:"#bc2323"
+            state "fan only", action:"polling.poll", label:'${name}', icon: "st.Appliances.appliances11"
         }
-        valueTile("humidity", "device.humidity", inactiveLabel: false, decoration: "flat") {
+
+        valueTile("humidity", "device.humidity", inactiveLabel: false) {
             state "default", label:'${currentValue}%', unit:"Humidity"
         }
+
         standardTile("presence", "device.presence", inactiveLabel: false, decoration: "flat") {
             state "present", label:'${name}', action:"away", icon: "st.Home.home2"
-            state "away", label:'${name}', action:"present", icon: "st.Transportation.transportation5"
+            state "not present", label:'away', action:"present", icon: "st.Transportation.transportation5"
         }
+
         standardTile("refresh", "device.thermostatMode", inactiveLabel: false, decoration: "flat") {
             state "default", action:"polling.poll", icon:"st.secondary.refresh"
         }
-        main "temperature"
-        details(["temperature", "thermostatMode", "thermostatFanMode", "heatSliderControl", "heatingSetpoint", "coolSliderControl", "coolingSetpoint", "humidity", "presence", "refresh"])
-    }
+
+		standardTile("temperatureUnit", "device.temperatureUnit", canChangeIcon: false) {
+			state "fahrenheit",  label: "°F", icon: "st.alarm.temperature.normal", action:"setCelsius"
+			state "celsius", label: "°C", icon: "st.alarm.temperature.normal", action:"setFahrenheit"
+		}
+
+		// ============================================================
+		// Slider only section
+		// To switch from slider to buttons, comment out this section.
+        	controlTile("heatSliderControl", "device.heatingSetpoint", "slider", height: 1, width: 2, inactiveLabel: false) {
+				state "setHeatingSetpoint", label:'Set temperature to', action:"thermostat.setHeatingSetpoint"
+			}
+			controlTile("coolSliderControl", "device.coolingSetpoint", "slider", height: 1, width: 2, inactiveLabel: false) {
+				state "setCoolingSetpoint", label:'Set temperature to', action:"thermostat.setCoolingSetpoint"
+			}
+
+			main(["temperature", "thermostatOperatingState", "humidity"])
+			details(["temperature", "thermostatOperatingState", "humidity", "thermostatMode", "thermostatFanMode", "presence", "heatingSetpoint", "heatSliderControl", "coolingSetpoint", "coolSliderControl", "temperatureUnit", "refresh"])
+        // End slider only section.
+		// ============================================================
+
+		
+		// ============================================================
+		// Button only section
+		// To switch from slider to buttons, uncomment out this section.
+		/**
+			standardTile("heatingSetpointUp", "device.heatingSetpoint", canChangeIcon: false, inactiveLabel: false, decoration: "flat") {
+							state "heatingSetpointUp", label:'  ', action:"heatingSetpointUp", icon:"st.thermostat.thermostat-up", backgroundColor:"#bc2323"
+			}
+			standardTile("heatingSetpointDown", "device.heatingSetpoint", canChangeIcon: false, inactiveLabel: false, decoration: "flat") {
+							state "heatingSetpointDown", label:'  ', action:"heatingSetpointDown", icon:"st.thermostat.thermostat-down", backgroundColor:"#bc2323"
+			}
+			standardTile("coolingSetpointUp", "device.heatingSetpoint", canChangeIcon: false, inactiveLabel: false, decoration: "flat") {
+							state "coolingSetpointUp", label:'  ', action:"coolingSetpointUp", icon:"st.thermostat.thermostat-up", backgroundColor:"#1e9cbb"
+			}
+			standardTile("coolingSetpointDown", "device.heatingSetpoint", canChangeIcon: false, inactiveLabel: false, decoration: "flat") {
+							state "coolingSetpointDown", label:'  ', action:"coolingSetpointDown", icon:"st.thermostat.thermostat-down", backgroundColor:"#1e9cbb"
+			}
+
+			main(["temperature", "thermostatOperatingState", "humidity"])
+			details(["temperature", "thermostatOperatingState", "humidity", "thermostatMode", "thermostatFanMode", "presence", "heatingSetpointDown", "heatingSetpoint", "heatingSetpointUp", "coolingSetpointDown", "coolingSetpoint", "coolingSetpointUp", "temperatureUnit", "refresh"])
+		*/
+		// End button only section.
+		// ============================================================
+
+	}
 }
 
 // parse events into attributes
@@ -147,34 +217,110 @@ def parse(String description) {
 // handle commands
 def setHeatingSetpoint(temp) {
     def latestThermostatMode = device.latestState('thermostatMode')
-    
-    if (temp) {
-        if (latestThermostatMode.stringValue == 'range') {
-            api('temperature', ['target_change_pending': true, 'target_temperature_low': fToC(temp)]) {
-                sendEvent(name: 'heatingSetpoint', value: temp)
-            }
-        } else if (latestThermostatMode.stringValue == 'cool') {
-            api('temperature', ['target_change_pending': true, 'target_temperature': fToC(temp)]) {
-                sendEvent(name: 'heatingSetpoint', value: temp)
-            }
-        }
-    }
+    def temperatureUnit = device.latestValue('temperatureUnit')
+	
+	switch (temperatureUnit) {
+		case "celsius":
+			if (temp) {
+				if (latestThermostatMode.stringValue == 'range') {
+					api('temperature', ['target_change_pending': true, 'target_temperature_low': temp]) {
+						sendEvent(name: 'heatingSetpoint', value: heatingSetpoint, unit: temperatureUnit, state: "heat")
+					}
+				} else if (latestThermostatMode.stringValue == 'cool') {
+					api('temperature', ['target_change_pending': true, 'target_temperature': temp]) {
+						sendEvent(name: 'heatingSetpoint', value: heatingSetpoint, unit: temperatureUnit, state: "heat")
+					}
+				}
+			}
+			break;
+		case "fahrenheit":
+			if (temp) {
+				if (latestThermostatMode.stringValue == 'range') {
+					api('temperature', ['target_change_pending': true, 'target_temperature_low': fToC(temp)]) {
+						sendEvent(name: 'heatingSetpoint', value: heatingSetpoint, unit: temperatureUnit, state: "heat")
+					}
+				} else if (latestThermostatMode.stringValue == 'cool') {
+					api('temperature', ['target_change_pending': true, 'target_temperature': fToC(temp)]) {
+						sendEvent(name: 'heatingSetpoint', value: heatingSetpoint, unit: temperatureUnit, state: "heat")
+					}
+				}
+			}
+			break;
+	}
+	poll()
+}
+
+def coolingSetpointUp(){
+    int newSetpoint = device.currentValue("coolingSetpoint") + 1
+    log.debug "Setting cool set point up to: ${newSetpoint}"
+    setCoolingSetpoint(newSetpoint)
+}
+
+def coolingSetpointDown(){
+    int newSetpoint = device.currentValue("coolingSetpoint") - 1
+    log.debug "Setting cool set point down to: ${newSetpoint}"
+    setCoolingSetpoint(newSetpoint)
 }
 
 def setCoolingSetpoint(temp) {
     def latestThermostatMode = device.latestState('thermostatMode')
-    
-    if (temp) {
-        if (latestThermostatMode.stringValue == 'range') {
-            api('temperature', ['target_change_pending': true, 'target_temperature_high': fToC(temp)]) {
-                sendEvent(name: 'coolingSetpoint', value: temp)
-            }
-        } else if (latestThermostatMode.stringValue == 'cool') {
-            api('temperature', ['target_change_pending': true, 'target_temperature': fToC(temp)]) {
-                sendEvent(name: 'coolingSetpoint', value: temp)
-            }
-        }
-    }
+	def temperatureUnit = device.latestValue('temperatureUnit')
+
+	switch (temperatureUnit) {
+		case "celsius":
+			if (temp) {
+				if (latestThermostatMode.stringValue == 'range') {
+					api('temperature', ['target_change_pending': true, 'target_temperature_high': temp]) {
+						sendEvent(name: 'coolingSetpoint', value: coolingSetpoint, unit: temperatureUnit, state: "cool")
+					}
+				} else if (latestThermostatMode.stringValue == 'cool') {
+					api('temperature', ['target_change_pending': true, 'target_temperature': temp]) {
+						sendEvent(name: 'coolingSetpoint', value: coolingSetpoint, unit: temperatureUnit, state: "cool")
+					}
+				}
+			}
+			break;
+		case "fahrenheit":
+			if (temp) {
+				if (latestThermostatMode.stringValue == 'range') {
+					api('temperature', ['target_change_pending': true, 'target_temperature_high': fToC(temp)]) {
+						sendEvent(name: 'coolingSetpoint', value: coolingSetpoint, unit: temperatureUnit, state: "cool")
+					}
+				} else if (latestThermostatMode.stringValue == 'cool') {
+					api('temperature', ['target_change_pending': true, 'target_temperature': fToC(temp)]) {
+						sendEvent(name: 'coolingSetpoint', value: coolingSetpoint, unit: temperatureUnit, state: "cool")
+					}
+				}
+			}
+			break;
+	}
+	poll()
+}
+
+def heatingSetpointUp(){
+    int newSetpoint = device.currentValue("heatingSetpoint") + 1
+    log.debug "Setting heat set point up to: ${newSetpoint}"
+    setHeatingSetpoint(newSetpoint)
+}
+
+def heatingSetpointDown(){
+    int newSetpoint = device.currentValue("heatingSetpoint") - 1
+    log.debug "Setting heat set point down to: ${newSetpoint}"
+    setHeatingSetpoint(newSetpoint)
+}
+
+def setFahrenheit() {
+    def temperatureUnit = "fahrenheit"
+    log.debug "Setting temperatureUnit to: ${temperatureUnit}"
+	sendEvent(name: "temperatureUnit",   value: temperatureUnit)
+    poll()
+}
+
+def setCelsius() {
+    def temperatureUnit = "celsius"
+    log.debug "Setting temperatureUnit to: ${temperatureUnit}"
+	sendEvent(name: "temperatureUnit",   value: temperatureUnit)
+    poll()
 }
 
 def off() {
@@ -193,7 +339,7 @@ def cool() {
     setThermostatMode('cool')
 }
 
-def range() {
+def auto() {
     setThermostatMode('range')
 }
 
@@ -227,6 +373,7 @@ def setThermostatFanMode(mode) {
 
     api('fan_mode', modes.getAt(mode)) {
         sendEvent(name: 'thermostatFanMode', value: mode)
+        poll()
     }
 }
 
@@ -241,12 +388,8 @@ def present() {
 def setPresence(status) {
     log.debug "Status: $status"
     api('presence', ['away': status == 'away', 'away_timestamp': new Date().getTime(), 'away_setter': 0]) {
-        sendEvent(name: 'presence', value: status)
+    	poll()
     }
-}
-
-def auto() {
-    log.debug "Executing 'auto'"
 }
 
 def poll() {
@@ -263,32 +406,82 @@ def poll() {
         log.debug(data.shared)
         
         def humidity = data.device.current_humidity
-        def temperature = Math.round(cToF(data.shared.current_temperature))
         def temperatureType = data.shared.target_temperature_type
         def fanMode = data.device.fan_mode
-        
-        sendEvent(name: 'humidity', value: humidity)
-        sendEvent(name: 'temperature', value: temperature, state: temperatureType)
-        sendEvent(name: 'thermostatFanMode', value: fanMode)
-        sendEvent(name: 'thermostatMode', value: temperatureType)
-        
-        def targetTemperature = Math.round(cToF(data.shared.target_temperature))
         def heatingSetpoint = '--'
         def coolingSetpoint = '--'
-        
-        if (temperatureType == "cool") {
-            coolingSetpoint = targetTemperature
-        } else if (temperatureType == "heat") {
-            heatingSetpoint = targetTemperature
-        } else if (temperatureType == "range") {
-            coolingSetpoint = Math.round(cToF(data.shared.target_temperature_high))
-            heatingSetpoint = Math.round(cToF(data.shared.target_temperature_low))
+
+		sendEvent(name: 'humidity', value: humidity)
+        sendEvent(name: 'thermostatFanMode', value: fanMode)
+        sendEvent(name: 'thermostatMode', value: temperatureType)
+
+		def temperatureUnit = device.latestValue('temperatureUnit')
+
+		if (temperatureUnit == null) {
+			log.debug "temperatureUnit is null"
+			setFahrenheit
+		}
+
+		switch (temperatureUnit) {
+			case "celsius":
+				def temperature = Math.round(data.shared.current_temperature)
+				def targetTemperature = Math.round(data.shared.target_temperature)
+                
+				if (temperatureType == "cool") {
+					coolingSetpoint = targetTemperature
+				} else if (temperatureType == "heat") {
+					heatingSetpoint = targetTemperature
+				} else if (temperatureType == "range") {
+					coolingSetpoint = Math.round(data.shared.target_temperature_high)
+					heatingSetpoint = Math.round(data.shared.target_temperature_low)
+				}
+
+                sendEvent(name: 'temperature', value: temperature, unit: temperatureUnit, state: temperatureType)
+                sendEvent(name: 'coolingSetpoint', value: coolingSetpoint, unit: temperatureUnit, state: "cool")
+                sendEvent(name: 'heatingSetpoint', value: heatingSetpoint, unit: temperatureUnit, state: "heat")
+                break;
+			case "fahrenheit":
+				def temperature = Math.round(cToF(data.shared.current_temperature))
+				def targetTemperature = Math.round(cToF(data.shared.target_temperature))
+
+				if (temperatureType == "cool") {
+					coolingSetpoint = targetTemperature
+				} else if (temperatureType == "heat") {
+					heatingSetpoint = targetTemperature
+				} else if (temperatureType == "range") {
+					coolingSetpoint = Math.round(cToF(data.shared.target_temperature_high))
+					heatingSetpoint = Math.round(cToF(data.shared.target_temperature_low))
+				}
+
+                sendEvent(name: 'temperature', value: temperature, unit: temperatureUnit, state: temperatureType)
+                sendEvent(name: 'coolingSetpoint', value: coolingSetpoint, unit: temperatureUnit, state: "cool")
+                sendEvent(name: 'heatingSetpoint', value: heatingSetpoint, unit: temperatureUnit, state: "heat")
+                break;
+		}
+
+		switch (device.latestValue('presence')) {
+        	case "present":
+            	if (data.structure.away == 'away') {
+                    sendEvent(name: 'presence', value: 'not present')
+                }
+				break;
+            case "not present":
+            	if (data.structure.away == 'present') {
+                    sendEvent(name: 'presence', value: 'present')
+                }
+				break;
         }
-        
-        sendEvent(name: 'coolingSetpoint', value: coolingSetpoint)
-        sendEvent(name: 'heatingSetpoint', value: heatingSetpoint)
-        sendEvent(name: 'presence', value: data.structure.away)
-    }
+
+		if (data.shared.hvac_ac_state) {
+            sendEvent(name: 'thermostatOperatingState', value: "cooling")
+		} else if (data.shared.hvac_heater_state) {
+            sendEvent(name: 'thermostatOperatingState', value: "heating")
+		} else if (data.shared.hvac_fan_state) {
+            sendEvent(name: 'thermostatOperatingState', value: "fan only")
+		} else {
+            sendEvent(name: 'thermostatOperatingState', value: "idle")
+		}
+	}
 }
 
 def api(method, args = [], success = {}) {
