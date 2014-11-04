@@ -29,7 +29,7 @@
  *         setFahrenheit
  *         setCelsius
  *
- * 2) If you want to switch from slider controls to buttons, comment out the slider only section and uncomment the button only section.
+ * 2) If you want to switch from slider controls to buttons, comment out the slider details line and uncomment the button details line.
  *
  * 3) Create a new device (https://graph.api.smartthings.com/device/list)
  *     Name: Your Choice
@@ -167,44 +167,39 @@ metadata {
 			state "celsius", label: "°C", icon: "st.alarm.temperature.normal", action:"setFahrenheit"
 		}
 
-		// ============================================================
-		// Slider only section
-		// To switch from slider to buttons, comment out this section.
-        	controlTile("heatSliderControl", "device.heatingSetpoint", "slider", height: 1, width: 2, inactiveLabel: false) {
-				state "setHeatingSetpoint", label:'Set temperature to', action:"thermostat.setHeatingSetpoint"
-			}
-			controlTile("coolSliderControl", "device.coolingSetpoint", "slider", height: 1, width: 2, inactiveLabel: false) {
-				state "setCoolingSetpoint", label:'Set temperature to', action:"thermostat.setCoolingSetpoint"
-			}
+		controlTile("heatSliderControl", "device.heatingSetpoint", "slider", height: 1, width: 2, inactiveLabel: false) {
+			state "setHeatingSetpoint", label:'Set temperature to', action:"thermostat.setHeatingSetpoint"
+		}
+		controlTile("coolSliderControl", "device.coolingSetpoint", "slider", height: 1, width: 2, inactiveLabel: false) {
+			state "setCoolingSetpoint", label:'Set temperature to', action:"thermostat.setCoolingSetpoint"
+		}
 
-			main(["temperature", "thermostatOperatingState", "humidity"])
+		standardTile("heatingSetpointUp", "device.heatingSetpoint", canChangeIcon: false, inactiveLabel: false, decoration: "flat") {
+						state "heatingSetpointUp", label:'  ', action:"heatingSetpointUp", icon:"st.thermostat.thermostat-up", backgroundColor:"#bc2323"
+		}
+		standardTile("heatingSetpointDown", "device.heatingSetpoint", canChangeIcon: false, inactiveLabel: false, decoration: "flat") {
+						state "heatingSetpointDown", label:'  ', action:"heatingSetpointDown", icon:"st.thermostat.thermostat-down", backgroundColor:"#bc2323"
+		}
+		standardTile("coolingSetpointUp", "device.heatingSetpoint", canChangeIcon: false, inactiveLabel: false, decoration: "flat") {
+						state "coolingSetpointUp", label:'  ', action:"coolingSetpointUp", icon:"st.thermostat.thermostat-up", backgroundColor:"#1e9cbb"
+		}
+		standardTile("coolingSetpointDown", "device.heatingSetpoint", canChangeIcon: false, inactiveLabel: false, decoration: "flat") {
+						state "coolingSetpointDown", label:'  ', action:"coolingSetpointDown", icon:"st.thermostat.thermostat-down", backgroundColor:"#1e9cbb"
+		}
+
+		main(["temperature", "thermostatOperatingState", "humidity"])
+
+		// ============================================================
+		// Slider or Buttons...
+			// To expose buttons, comment out the first detials line below and uncomment the second details line below.
+        	// To expose sliders, uncomment the first details line below and comment out the second details line below.
+
 			details(["temperature", "thermostatOperatingState", "humidity", "thermostatMode", "thermostatFanMode", "presence", "heatingSetpoint", "heatSliderControl", "coolingSetpoint", "coolSliderControl", "temperatureUnit", "refresh"])
-        // End slider only section.
+
+			// details(["temperature", "thermostatOperatingState", "humidity", "thermostatMode", "thermostatFanMode", "presence", "heatingSetpointDown", "heatingSetpoint", "heatingSetpointUp", "coolingSetpointDown", "coolingSetpoint", "coolingSetpointUp", "temperatureUnit", "refresh"])
+
 		// ============================================================
 
-		
-		// ============================================================
-		// Button only section
-		// To switch from slider to buttons, uncomment out this section.
-		/**
-			standardTile("heatingSetpointUp", "device.heatingSetpoint", canChangeIcon: false, inactiveLabel: false, decoration: "flat") {
-							state "heatingSetpointUp", label:'  ', action:"heatingSetpointUp", icon:"st.thermostat.thermostat-up", backgroundColor:"#bc2323"
-			}
-			standardTile("heatingSetpointDown", "device.heatingSetpoint", canChangeIcon: false, inactiveLabel: false, decoration: "flat") {
-							state "heatingSetpointDown", label:'  ', action:"heatingSetpointDown", icon:"st.thermostat.thermostat-down", backgroundColor:"#bc2323"
-			}
-			standardTile("coolingSetpointUp", "device.heatingSetpoint", canChangeIcon: false, inactiveLabel: false, decoration: "flat") {
-							state "coolingSetpointUp", label:'  ', action:"coolingSetpointUp", icon:"st.thermostat.thermostat-up", backgroundColor:"#1e9cbb"
-			}
-			standardTile("coolingSetpointDown", "device.heatingSetpoint", canChangeIcon: false, inactiveLabel: false, decoration: "flat") {
-							state "coolingSetpointDown", label:'  ', action:"coolingSetpointDown", icon:"st.thermostat.thermostat-down", backgroundColor:"#1e9cbb"
-			}
-
-			main(["temperature", "thermostatOperatingState", "humidity"])
-			details(["temperature", "thermostatOperatingState", "humidity", "thermostatMode", "thermostatFanMode", "presence", "heatingSetpointDown", "heatingSetpoint", "heatingSetpointUp", "coolingSetpointDown", "coolingSetpoint", "coolingSetpointUp", "temperatureUnit", "refresh"])
-		*/
-		// End button only section.
-		// ============================================================
 
 	}
 }
