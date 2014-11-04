@@ -233,7 +233,7 @@ def setHeatingSetpoint(temp) {
 				}
 			}
 			break;
-		case "fahrenheit":
+		default:
 			if (temp) {
 				if (latestThermostatMode.stringValue == 'range') {
 					api('temperature', ['target_change_pending': true, 'target_temperature_low': fToC(temp)]) {
@@ -280,7 +280,7 @@ def setCoolingSetpoint(temp) {
 				}
 			}
 			break;
-		case "fahrenheit":
+		default:
 			if (temp) {
 				if (latestThermostatMode.stringValue == 'range') {
 					api('temperature', ['target_change_pending': true, 'target_temperature_high': fToC(temp)]) {
@@ -417,11 +417,6 @@ def poll() {
 
 		def temperatureUnit = device.latestValue('temperatureUnit')
 
-		if (temperatureUnit == null) {
-			log.debug "temperatureUnit is null"
-			setFahrenheit
-		}
-
 		switch (temperatureUnit) {
 			case "celsius":
 				def temperature = Math.round(data.shared.current_temperature)
@@ -440,7 +435,7 @@ def poll() {
                 sendEvent(name: 'coolingSetpoint', value: coolingSetpoint, unit: temperatureUnit, state: "cool")
                 sendEvent(name: 'heatingSetpoint', value: heatingSetpoint, unit: temperatureUnit, state: "heat")
                 break;
-			case "fahrenheit":
+			default:
 				def temperature = Math.round(cToF(data.shared.current_temperature))
 				def targetTemperature = Math.round(cToF(data.shared.target_temperature))
 
@@ -457,7 +452,7 @@ def poll() {
                 sendEvent(name: 'coolingSetpoint', value: coolingSetpoint, unit: temperatureUnit, state: "cool")
                 sendEvent(name: 'heatingSetpoint', value: heatingSetpoint, unit: temperatureUnit, state: "heat")
                 break;
-		}
+			}
 
 		switch (device.latestValue('presence')) {
         	case "present":
