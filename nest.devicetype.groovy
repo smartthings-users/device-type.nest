@@ -226,7 +226,7 @@ def setHeatingSetpoint(temp) {
 					api('temperature', ['target_change_pending': true, 'target_temperature_low': temp]) {
 						sendEvent(name: 'heatingSetpoint', value: heatingSetpoint, unit: temperatureUnit, state: "heat")
 					}
-				} else if (latestThermostatMode.stringValue == 'cool') {
+				} else if (latestThermostatMode.stringValue == 'heat') {
 					api('temperature', ['target_change_pending': true, 'target_temperature': temp]) {
 						sendEvent(name: 'heatingSetpoint', value: heatingSetpoint, unit: temperatureUnit, state: "heat")
 					}
@@ -239,7 +239,7 @@ def setHeatingSetpoint(temp) {
 					api('temperature', ['target_change_pending': true, 'target_temperature_low': fToC(temp)]) {
 						sendEvent(name: 'heatingSetpoint', value: heatingSetpoint, unit: temperatureUnit, state: "heat")
 					}
-				} else if (latestThermostatMode.stringValue == 'cool') {
+				} else if (latestThermostatMode.stringValue == 'heat') {
 					api('temperature', ['target_change_pending': true, 'target_temperature': fToC(temp)]) {
 						sendEvent(name: 'heatingSetpoint', value: heatingSetpoint, unit: temperatureUnit, state: "heat")
 					}
