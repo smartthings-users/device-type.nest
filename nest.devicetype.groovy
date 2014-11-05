@@ -374,10 +374,12 @@ def setThermostatFanMode(mode) {
 
 def away() {
     setPresence('away')
+	sendEvent(name: 'presence', value: 'not present')
 }
 
 def present() {
     setPresence('present')
+	sendEvent(name: 'presence', value: 'present')
 }
 
 def setPresence(status) {
