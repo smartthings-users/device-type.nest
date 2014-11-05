@@ -33,7 +33,7 @@ Note: this is technically against the Nest TOS. So use at your own risk.
 
 1. Publish the device type (next to Save button) > For Me
 
-1. If you want to switch from slider controls to buttons, comment out the slider only section and uncomment the button only section.
+1. If you want to switch from slider controls to buttons, comment out the slider details line and uncomment the button details line.
 
 1. Create a new device (https://graph.api.smartthings.com/device/list)
     * Name: Your Choice
