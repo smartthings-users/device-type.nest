@@ -217,6 +217,12 @@ def setHeatingSetpoint(temp) {
 	switch (temperatureUnit) {
 		case "celsius":
 			if (temp) {
+				if (temp < 9) {
+					temp = 9
+				}
+				if (temp > 32) {
+					temp = 32
+				}
 				if (latestThermostatMode.stringValue == 'range') {
 					api('temperature', ['target_change_pending': true, 'target_temperature_low': temp]) {
 						sendEvent(name: 'heatingSetpoint', value: heatingSetpoint, unit: temperatureUnit, state: "heat")
@@ -230,6 +236,12 @@ def setHeatingSetpoint(temp) {
 			break;
 		default:
 			if (temp) {
+				if (temp < 51) {
+					temp = 51
+				}
+				if (temp > 89) {
+					temp = 89
+				}
 				if (latestThermostatMode.stringValue == 'range') {
 					api('temperature', ['target_change_pending': true, 'target_temperature_low': fToC(temp)]) {
 						sendEvent(name: 'heatingSetpoint', value: heatingSetpoint, unit: temperatureUnit, state: "heat")
@@ -264,6 +276,12 @@ def setCoolingSetpoint(temp) {
 	switch (temperatureUnit) {
 		case "celsius":
 			if (temp) {
+				if (temp < 9) {
+					temp = 9
+				}
+				if (temp > 32) {
+					temp = 32
+				}
 				if (latestThermostatMode.stringValue == 'range') {
 					api('temperature', ['target_change_pending': true, 'target_temperature_high': temp]) {
 						sendEvent(name: 'coolingSetpoint', value: coolingSetpoint, unit: temperatureUnit, state: "cool")
@@ -277,6 +295,12 @@ def setCoolingSetpoint(temp) {
 			break;
 		default:
 			if (temp) {
+				if (temp < 51) {
+					temp = 51
+				}
+				if (temp > 89) {
+					temp = 89
+				}
 				if (latestThermostatMode.stringValue == 'range') {
 					api('temperature', ['target_change_pending': true, 'target_temperature_high': fToC(temp)]) {
 						sendEvent(name: 'coolingSetpoint', value: coolingSetpoint, unit: temperatureUnit, state: "cool")
