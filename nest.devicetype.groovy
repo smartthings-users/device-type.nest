@@ -223,7 +223,7 @@ def setHeatingSetpoint(temp) {
 				if (temp > 32) {
 					temp = 32
 				}
-				if (latestThermostatMode.stringValue == 'range') {
+				if (latestThermostatMode.stringValue == 'auto') {
 					api('temperature', ['target_change_pending': true, 'target_temperature_low': temp]) {
 						sendEvent(name: 'heatingSetpoint', value: heatingSetpoint, unit: temperatureUnit, state: "heat")
 					}
@@ -242,7 +242,7 @@ def setHeatingSetpoint(temp) {
 				if (temp > 89) {
 					temp = 89
 				}
-				if (latestThermostatMode.stringValue == 'range') {
+				if (latestThermostatMode.stringValue == 'auto') {
 					api('temperature', ['target_change_pending': true, 'target_temperature_low': fToC(temp)]) {
 						sendEvent(name: 'heatingSetpoint', value: heatingSetpoint, unit: temperatureUnit, state: "heat")
 					}
@@ -282,7 +282,7 @@ def setCoolingSetpoint(temp) {
 				if (temp > 32) {
 					temp = 32
 				}
-				if (latestThermostatMode.stringValue == 'range') {
+				if (latestThermostatMode.stringValue == 'auto') {
 					api('temperature', ['target_change_pending': true, 'target_temperature_high': temp]) {
 						sendEvent(name: 'coolingSetpoint', value: coolingSetpoint, unit: temperatureUnit, state: "cool")
 					}
@@ -301,7 +301,7 @@ def setCoolingSetpoint(temp) {
 				if (temp > 89) {
 					temp = 89
 				}
-				if (latestThermostatMode.stringValue == 'range') {
+				if (latestThermostatMode.stringValue == 'auto') {
 					api('temperature', ['target_change_pending': true, 'target_temperature_high': fToC(temp)]) {
 						sendEvent(name: 'coolingSetpoint', value: coolingSetpoint, unit: temperatureUnit, state: "cool")
 					}
@@ -366,6 +366,7 @@ def setThermostatMode(mode) {
     mode = mode == 'emergency heat'? 'heat' : mode
     
     api('thermostat_mode', ['target_change_pending': true, 'target_temperature_type': mode]) {
+        mode = mode == 'range' ? 'auto' : mode
         sendEvent(name: 'thermostatMode', value: mode)
         poll()
     }
@@ -431,6 +432,8 @@ def poll() {
         def fanMode = data.device.fan_mode
         def heatingSetpoint = '--'
         def coolingSetpoint = '--'
+        
+        temperatureType = temperatureType == 'range' ? 'auto' : temperatureType
 
 		sendEvent(name: 'humidity', value: humidity)
         sendEvent(name: 'thermostatFanMode', value: fanMode)
@@ -447,7 +450,7 @@ def poll() {
 					coolingSetpoint = targetTemperature
 				} else if (temperatureType == "heat") {
 					heatingSetpoint = targetTemperature
-				} else if (temperatureType == "range") {
+				} else if (temperatureType == "auto") {
 					coolingSetpoint = Math.round(data.shared.target_temperature_high)
 					heatingSetpoint = Math.round(data.shared.target_temperature_low)
 				}
@@ -464,7 +467,7 @@ def poll() {
 					coolingSetpoint = targetTemperature
 				} else if (temperatureType == "heat") {
 					heatingSetpoint = targetTemperature
-				} else if (temperatureType == "range") {
+				} else if (temperatureType == "auto") {
 					coolingSetpoint = Math.round(cToF(data.shared.target_temperature_high))
 					heatingSetpoint = Math.round(cToF(data.shared.target_temperature_low))
 				}
