@@ -29,16 +29,18 @@
  *         setFahrenheit
  *         setCelsius
  *
- * 2) If you want to switch from slider controls to buttons, comment out the slider details line and uncomment the button details line.
+ * 2) Replace device definition code on next page with contents of the nest.devicetype.groovy file from this repository.
  *
- * 3) Create a new device (https://graph.api.smartthings.com/device/list)
+ * 3) If you want to switch from slider controls to buttons, comment out the slider details line and uncomment the button details line.
+ *
+ * 4) Create a new device (https://graph.api.smartthings.com/device/list)
  *     Name: Your Choice
  *     Device Network Id: Your Choice
  *     Type: Nest (should be the last option)
  *     Location: Choose the correct location
  *     Hub/Group: Leave blank
  *
- * 4) Update device preferences
+ * 5) Update device preferences
  *     Click on the new device to see the details.
  *     Click the edit button next to Preferences
  *     Fill in your information.
@@ -46,7 +48,7 @@
  *     you want to control. Under settings, go to Technical Info. Your serial number is
  *     the second item.
  *
- * 5) That's it, you're done.
+ * 6) That's it, you're done.
  *
  * Copyright (C) 2013 Brian Steere <dianoga7@3dgo.net>
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this
@@ -90,7 +92,7 @@ metadata {
 		command "coolingSetpointDown"
 		command "setFahrenheit"
 		command "setCelsius"
-		
+
 		attribute "temperatureUnit", "string"
 	}
 
@@ -213,7 +215,7 @@ def parse(String description) {
 def setHeatingSetpoint(temp) {
     def latestThermostatMode = device.latestState('thermostatMode')
     def temperatureUnit = device.latestValue('temperatureUnit')
-	
+
 	switch (temperatureUnit) {
 		case "celsius":
 			if (temp) {
@@ -364,7 +366,7 @@ def auto() {
 
 def setThermostatMode(mode) {
     mode = mode == 'emergency heat'? 'heat' : mode
-    
+
     api('thermostat_mode', ['target_change_pending': true, 'target_temperature_type': mode]) {
         mode = mode == 'range' ? 'auto' : mode
         sendEvent(name: 'thermostatMode', value: mode)
@@ -421,18 +423,18 @@ def poll() {
         data.shared = it.data.shared.getAt(settings.serial)
         data.structureId = it.data.link.getAt(settings.serial).structure.tokenize('.')[1]
         data.structure = it.data.structure.getAt(data.structureId)
-                
+
         data.device.fan_mode = data.device.fan_mode == 'duty-cycle'? 'circulate' : data.device.fan_mode
         data.structure.away = data.structure.away ? 'away' : 'present'
-        
+
         log.debug(data.shared)
-        
+
         def humidity = data.device.current_humidity
         def temperatureType = data.shared.target_temperature_type
         def fanMode = data.device.fan_mode
         def heatingSetpoint = '--'
         def coolingSetpoint = '--'
-        
+
         temperatureType = temperatureType == 'range' ? 'auto' : temperatureType
 
 		sendEvent(name: 'humidity', value: humidity)
@@ -445,7 +447,7 @@ def poll() {
 			case "celsius":
 				def temperature = Math.round(data.shared.current_temperature)
 				def targetTemperature = Math.round(data.shared.target_temperature)
-                
+
 				if (temperatureType == "cool") {
 					coolingSetpoint = targetTemperature
 				} else if (temperatureType == "heat") {
@@ -541,7 +543,7 @@ def doRequest(uri, args, type, success) {
         ],
         body: args
     ]
-    
+
      def postRequest = { response ->
         if (response.getStatus() == 302) {
         	def locations = response.getHeaders("Location")
