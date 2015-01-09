@@ -592,9 +592,9 @@ def isLoggedIn() {
 }
 
 def cToF(temp) {
-	return temp * 1.8 + 32
+	return (temp * 1.8 + 32).toDouble()
 }
 
 def fToC(temp) {
-	return (temp - 32) / 1.8
+	return ((temp - 32) / 1.8).toDouble()
 }
