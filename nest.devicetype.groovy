@@ -29,16 +29,18 @@
  *         setFahrenheit
  *         setCelsius
  *
- * 2) If you want to switch from slider controls to buttons, comment out the slider details line and uncomment the button details line.
+ * 2) On next page, replace the device definition code with contents of the nest.devicetype.groovy file from this repository.
  *
- * 3) Create a new device (https://graph.api.smartthings.com/device/list)
+ * 3) If you want to switch from slider controls to buttons, comment out the slider details line and uncomment the button details line.
+ *
+ * 4) Create a new device (https://graph.api.smartthings.com/device/list)
  *     Name: Your Choice
  *     Device Network Id: Your Choice
  *     Type: Nest (should be the last option)
  *     Location: Choose the correct location
  *     Hub/Group: Leave blank
  *
- * 4) Update device preferences
+ * 5) Update device preferences
  *     Click on the new device to see the details.
  *     Click the edit button next to Preferences
  *     Fill in your information.
@@ -46,7 +48,7 @@
  *     you want to control. Under settings, go to Technical Info. Your serial number is
  *     the second item.
  *
- * 5) That's it, you're done.
+ * 6) That's it, you're done.
  *
  * Copyright (C) 2013 Brian Steere <dianoga7@3dgo.net>
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this

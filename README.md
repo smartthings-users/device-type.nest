@@ -31,6 +31,8 @@ Note: this is technically against the Nest TOS. So use at your own risk.
         * setFahrenheit
         * setCelsius
 
+1. On next page, replace the device definition code with contents of the nest.devicetype.groovy file from this repository.
+
 1. Publish the device type (next to Save button) > For Me
 
 1. If you want to switch from slider controls to buttons, comment out the slider details line and uncomment the button details line.
