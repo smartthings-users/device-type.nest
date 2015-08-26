@@ -90,12 +90,12 @@ metadata {
 		command "coolingSetpointDown"
 		command "setFahrenheit"
 		command "setCelsius"
-			command "setHumiditySetpoint"
-			command "humiditySetpointUp"
-			command "humiditySetpointDown"
+		command "setHumiditySetpoint"
+		command "humiditySetpointUp"
+		command "humiditySetpointDown"
 
 		attribute "temperatureUnit", "string"
-			attribute "humiditySetpoint", "number"
+		attribute "humiditySetpoint", "number"
 	}
 
 	simulator {
@@ -157,9 +157,9 @@ metadata {
 			state "default", label:'${currentValue}%', unit:"Humidity"
 		}
 		
-			valueTile("humiditySetpoint", "humiditySetpoint", inactiveLabel: false) {
-					state "default", label:'${currentValue}%', unit:"Humidity", backgroundColor:"#308014"
-			}
+		valueTile("humiditySetpoint", "humiditySetpoint", inactiveLabel: false) {
+			state "default", label:'${currentValue}%', unit:"Humidity", backgroundColor:"#308014"
+		}
 
 		standardTile("presence", "device.presence", inactiveLabel: false, decoration: "flat") {
 			state "present", label:'${name}', action:"away", icon: "st.Home.home2"
@@ -181,9 +181,10 @@ metadata {
 		controlTile("coolSliderControl", "device.coolingSetpoint", "slider", height: 1, width: 2, inactiveLabel: false) {
 			state "setCoolingSetpoint", label:'Set temperature to', action:"thermostat.setCoolingSetpoint"
 		}
-			controlTile("humiditySliderControl", "humiditySetpoint", "slider", height: 1, width: 2, inactiveLabel: false) {
+
+		controlTile("humiditySliderControl", "humiditySetpoint", "slider", height: 1, width: 2, inactiveLabel: false) {
 			state "setHumiditySetpoint", label:'Set humidity to', action:"thermostat.setHumiditySetpoint"
-			}
+		}
 
 		standardTile("heatingSetpointUp", "device.heatingSetpoint", canChangeIcon: false, inactiveLabel: false, decoration: "flat") {
 			state "heatingSetpointUp", label:'  ', action:"heatingSetpointUp", icon:"st.thermostat.thermostat-up", backgroundColor:"#bc2323"
@@ -201,7 +202,7 @@ metadata {
 			state "coolingSetpointDown", label:'  ', action:"coolingSetpointDown", icon:"st.thermostat.thermostat-down", backgroundColor:"#1e9cbb"
 		}
 		
-			standardTile("humiditySetpointUp", "humiditySetpoint", canChangeIcon: false, inactiveLabel: false, decoration: "flat") {
+		standardTile("humiditySetpointUp", "humiditySetpoint", canChangeIcon: false, inactiveLabel: false, decoration: "flat") {
 			state "humiditySetpointUp", label:'  ', action:"humiditySetpointUp", icon:"st.thermostat.thermostat-up", backgroundColor:"#1e9cbb"
 		}
 
