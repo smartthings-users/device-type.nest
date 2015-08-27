@@ -249,7 +249,7 @@ def setHeatingSetpoint(temp) {
 					api('temperature', ['target_change_pending': true, 'target_temperature_low': temp]) {
 						sendEvent(name: 'heatingSetpoint', value: heatingSetpoint, unit: temperatureUnit, state: "heat")
 					}
-				} else {
+				} else if (latestThermostatMode.stringValue == 'heat') {
 					api('temperature', ['target_change_pending': true, 'target_temperature': temp]) {
 							sendEvent(name: 'heatingSetpoint', value: heatingSetpoint, unit: temperatureUnit, state: "heat")
 					}
@@ -268,7 +268,7 @@ def setHeatingSetpoint(temp) {
 					api('temperature', ['target_change_pending': true, 'target_temperature_low': fToC(temp)]) {
 						sendEvent(name: 'heatingSetpoint', value: heatingSetpoint, unit: temperatureUnit, state: "heat")
 					}
-				} else {
+				} else if (latestThermostatMode.stringValue == 'heat') {
 					api('temperature', ['target_change_pending': true, 'target_temperature': fToC(temp)]) {
 						sendEvent(name: 'heatingSetpoint', value: heatingSetpoint, unit: temperatureUnit, state: "heat")
 					}
@@ -308,7 +308,7 @@ def setCoolingSetpoint(temp) {
 					api('temperature', ['target_change_pending': true, 'target_temperature_high': temp]) {
 						sendEvent(name: 'coolingSetpoint', value: coolingSetpoint, unit: temperatureUnit, state: "cool")
 					}
-				} else {
+				} else if (latestThermostatMode.stringValue == 'cool') {
 					api('temperature', ['target_change_pending': true, 'target_temperature': temp]) {
 						sendEvent(name: 'coolingSetpoint', value: coolingSetpoint, unit: temperatureUnit, state: "cool")
 					}
@@ -327,7 +327,7 @@ def setCoolingSetpoint(temp) {
 					api('temperature', ['target_change_pending': true, 'target_temperature_high': fToC(temp)]) {
 						sendEvent(name: 'coolingSetpoint', value: coolingSetpoint, unit: temperatureUnit, state: "cool")
 					}
-				} else {
+				} else if (latestThermostatMode.stringValue == 'cool') {
 					api('temperature', ['target_change_pending': true, 'target_temperature': fToC(temp)]) {
 						sendEvent(name: 'coolingSetpoint', value: coolingSetpoint, unit: temperatureUnit, state: "cool")
 					}
