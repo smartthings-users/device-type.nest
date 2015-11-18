@@ -226,6 +226,13 @@ metadata {
 
 }
 
+// update preferences
+def updated() {
+	log.debug "Updated"
+	// reset the authentication
+	data.auth = null
+}
+
 // parse events into attributes
 def parse(String description) {
 
