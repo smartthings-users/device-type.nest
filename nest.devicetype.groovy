@@ -2,7 +2,7 @@
  *  Nest Direct
  *
  *  Author: dianoga7@3dgo.net
- *  Original Code: https://github.com/smartthings-users/device-type.nest
+ *  Code: https://github.com/smartthings-users/device-type.nest
  *
  * INSTALLATION
  * =========================================
