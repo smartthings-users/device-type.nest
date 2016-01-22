@@ -78,7 +78,6 @@ metadata {
 		capability "Relative Humidity Measurement"
 		capability "Thermostat"
 		capability "Temperature Measurement"
-		capability "Presence Sensor"
 		capability "Sensor"
 
 		command "away"
