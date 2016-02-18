@@ -80,6 +80,7 @@ metadata {
 		capability "Temperature Measurement"
 		capability "Presence Sensor"
 		capability "Sensor"
+		capability "Actuator"
 
 		command "away"
 		command "present"
