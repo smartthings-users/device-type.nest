@@ -21,7 +21,7 @@
  *     Custom Commands:
  *         away
  *         present
- *         setPresence
+ *         setNestPresence
  *         heatingSetpointUp
  *         heatingSetpointDown
  *         coolingSetpointUp
@@ -78,12 +78,11 @@ metadata {
 		capability "Relative Humidity Measurement"
 		capability "Thermostat"
 		capability "Temperature Measurement"
-		capability "Presence Sensor"
 		capability "Sensor"
 
 		command "away"
 		command "present"
-		command "setPresence"
+		command "setNestPresence"
 		command "heatingSetpointUp"
 		command "heatingSetpointDown"
 		command "coolingSetpointUp"
@@ -153,7 +152,7 @@ metadata {
 			state "default", label:'${currentValue}%', unit:"Humidity"
 		}
 
-		standardTile("presence", "device.presence", inactiveLabel: false, decoration: "flat") {
+		standardTile("nestPresence", "device.nestPresence", inactiveLabel: false, decoration: "flat") {
 			state "present", label:'${name}', action:"away", icon: "st.Home.home2"
 			state "not present", label:'away', action:"present", icon: "st.Transportation.transportation5"
 		}
@@ -197,8 +196,8 @@ metadata {
 		// To expose buttons, comment out the first detials line below and uncomment the second details line below.
 		// To expose sliders, uncomment the first details line below and comment out the second details line below.
 
-		details(["temperature", "thermostatOperatingState", "humidity", "thermostatMode", "thermostatFanMode", "presence", "heatingSetpoint", "heatSliderControl", "coolingSetpoint", "coolSliderControl", "temperatureUnit", "refresh"])
-		// details(["temperature", "thermostatOperatingState", "humidity", "thermostatMode", "thermostatFanMode", "presence", "heatingSetpointDown", "heatingSetpoint", "heatingSetpointUp", "coolingSetpointDown", "coolingSetpoint", "coolingSetpointUp", "temperatureUnit", "refresh"])
+		//details(["temperature", "thermostatOperatingState", "humidity", "thermostatMode", "thermostatFanMode", "nestPresence", "heatingSetpoint", "heatSliderControl", "coolingSetpoint", "coolSliderControl", "temperatureUnit", "refresh"])
+		 details(["temperature", "thermostatOperatingState", "humidity", "thermostatMode", "thermostatFanMode", "nestPresence", "heatingSetpointDown", "heatingSetpoint", "heatingSetpointUp", "coolingSetpointDown", "coolingSetpoint", "coolingSetpointUp", "temperatureUnit", "refresh"])
 
 		// ============================================================
 
@@ -400,18 +399,18 @@ def setThermostatFanMode(mode) {
 }
 
 def away() {
-	setPresence('away')
-	sendEvent(name: 'presence', value: 'not present')
+	setNestPresence('away')
+	sendEvent(name: 'nestPresence', value: 'not present')
 }
 
 def present() {
-	setPresence('present')
-	sendEvent(name: 'presence', value: 'present')
+	setNestPresence('present')
+	sendEvent(name: 'nestPresence', value: 'present')
 }
 
-def setPresence(status) {
+def setNestPresence(status) {
 	log.debug "Status: $status"
-	api('presence', ['away': status == 'away', 'away_timestamp': new Date().getTime(), 'away_setter': 0]) {
+	api('nestPresence', ['away': status == 'away', 'away_timestamp': new Date().getTime(), 'away_setter': 0]) {
 		poll()
 	}
 }
@@ -480,15 +479,15 @@ def poll() {
 				break;
 			}
 
-		switch (device.latestValue('presence')) {
+		switch (device.latestValue('nestPresence')) {
 			case "present":
 				if (data.structure.away == 'away') {
-					sendEvent(name: 'presence', value: 'not present')
+					sendEvent(name: 'nestPresence', value: 'not present')
 				}
 				break;
 			case "not present":
 				if (data.structure.away == 'present') {
-					sendEvent(name: 'presence', value: 'present')
+					sendEvent(name: 'nestPresence', value: 'present')
 				}
 				break;
 		}
@@ -517,7 +516,7 @@ def api(method, args = [], success = {}) {
 		'fan_mode': [uri: "/v2/put/device.${settings.serial}", type: 'post'],
 		'thermostat_mode': [uri: "/v2/put/shared.${settings.serial}", type: 'post'],
 		'temperature': [uri: "/v2/put/shared.${settings.serial}", type: 'post'],
-		'presence': [uri: "/v2/put/structure.${data.structureId}", type: 'post']
+		'nestPresence': [uri: "/v2/put/structure.${data.structureId}", type: 'post']
 	]
 
 	def request = methods.getAt(method)
